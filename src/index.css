@@ -1,0 +1,22 @@
+/* src/index.css - RESET MINIMO (NO ROMPE LAYOUT) */
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    /* IMPORTANTE: NO display:flex aquí */
+}
+
+#root {
+    min-height: 100%;
+}
