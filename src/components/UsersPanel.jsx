@@ -18,10 +18,10 @@ export default function UsersPanel() {
     const [createSuccess, setCreateSuccess] = useState("");
 
     const [editingUserId, setEditingUserId] = useState(null);
+    // ✅ Edit NO permite cambiar password, solo name/email/is_active
     const [editForm, setEditForm] = useState({
         full_name: "",
         email: "",
-        password: "",
         is_active: true,
     });
 
@@ -71,14 +71,13 @@ export default function UsersPanel() {
         setEditForm({
             full_name: user.full_name,
             email: user.email,
-            password: "",
             is_active: user.is_active,
         });
     };
 
     const cancelEdit = () => {
         setEditingUserId(null);
-        setEditForm({ full_name: "", email: "", password: "", is_active: true });
+        setEditForm({ full_name: "", email: "", is_active: true });
     };
 
     const handleEditChange = (e) => {
@@ -91,8 +90,13 @@ export default function UsersPanel() {
 
     const saveEdit = async (userId) => {
         try {
-            const payload = { ...editForm };
-            if (!payload.password) delete payload.password;
+            // ✅ No mandamos password nunca
+            const payload = {
+                full_name: editForm.full_name,
+                email: editForm.email,
+                is_active: editForm.is_active,
+            };
+
             await api.patch(`/users/${userId}/`, payload);
             cancelEdit();
             loadUsers();
@@ -156,6 +160,7 @@ export default function UsersPanel() {
                             required
                         />
                     </label>
+
                     <div className="full-row row-between">
                         <button className="btn primary" type="submit">
                             Crear usuario
@@ -193,9 +198,11 @@ export default function UsersPanel() {
                             <th style={{ width: 250 }}>Acciones</th>
                         </tr>
                         </thead>
+
                         <tbody>
                         {users.map((u) => {
                             const isEditing = editingUserId === u.id;
+
                             return (
                                 <tr key={u.id}>
                                     <td>{u.id}</td>
@@ -203,7 +210,7 @@ export default function UsersPanel() {
                                     <td>
                                         {isEditing ? (
                                             <input
-                                                className="input slim"
+                                                className="input slim table-input"
                                                 name="full_name"
                                                 value={editForm.full_name}
                                                 onChange={handleEditChange}
@@ -216,7 +223,7 @@ export default function UsersPanel() {
                                     <td>
                                         {isEditing ? (
                                             <input
-                                                className="input slim"
+                                                className="input slim table-input"
                                                 name="email"
                                                 value={editForm.email}
                                                 onChange={handleEditChange}
@@ -243,31 +250,28 @@ export default function UsersPanel() {
 
                                     <td>{new Date(u.created_at).toLocaleString()}</td>
 
-                                    <td>
+                                    <td className="td-actions">
                                         {isEditing ? (
-                                            <div className="actions">
-                                                <input
-                                                    className="input slim"
-                                                    name="password"
-                                                    type="password"
-                                                    placeholder="Nueva password (opcional)"
-                                                    value={editForm.password}
-                                                    onChange={handleEditChange}
-                                                />
-                                                <button className="btn small primary" onClick={() => saveEdit(u.id)}>
+                                            <div className="actions-row">
+                                                <button
+                                                    className="btn small primary"
+                                                    type="button"
+                                                    onClick={() => saveEdit(u.id)}
+                                                >
                                                     Guardar
                                                 </button>
-                                                <button className="btn small" onClick={cancelEdit}>
+                                                <button className="btn small" type="button" onClick={cancelEdit}>
                                                     Cancelar
                                                 </button>
                                             </div>
                                         ) : (
-                                            <div className="actions">
-                                                <button className="btn small" onClick={() => startEdit(u)}>
+                                            <div className="actions-row">
+                                                <button className="btn small" type="button" onClick={() => startEdit(u)}>
                                                     Editar
                                                 </button>
                                                 <button
                                                     className="btn small danger"
+                                                    type="button"
                                                     onClick={() => deactivateUser(u.id)}
                                                     disabled={!u.is_active}
                                                     title={!u.is_active ? "Este usuario ya está desactivado" : "Desactivar usuario"}

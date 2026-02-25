@@ -363,3 +363,24 @@ th{
 .form input::placeholder {
     color: rgba(100, 116, 139, 0.75); /* similar a muted */
 }
+
+/* Alinear acciones y distribuir botones */
+.td-actions{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    min-width: 180px;
+}
+
+.actions-row{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.table-input{
+    width: 100%;
+    min-width: 160px;
+}
