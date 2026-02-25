@@ -36,8 +36,6 @@ export default function ResetPasswordCompletePage() {
     const canSubmit = Boolean(uid && token && newPassword.length >= 6);
 
     const logoutLocal = () => {
-        // ✅ Muy importante: si tenías JWT guardado, podrías “seguir entrando”
-        // sin probar la nueva contraseña. Esto fuerza a re-autenticar.
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("auth_user");
@@ -56,7 +54,7 @@ export default function ResetPasswordCompletePage() {
                 new_password: newPassword,
             });
 
-            // ✅ Logout automático para obligar login con la nueva contraseña
+            // Logout automático para obligar login con la nueva contraseña
             logoutLocal();
 
             setSuccess(data?.message || "Contraseña actualizada correctamente.");
