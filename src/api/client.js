@@ -28,6 +28,16 @@ const clearAuth = () => {
 };
 
 /* =========================
+   Endpoints públicos (NO refrescar / NO redirigir)
+   ========================= */
+const PUBLIC_ENDPOINTS = [
+    "/auth/login/",
+    "/auth/password-reset/request/",
+    "/auth/password-reset/confirm/",
+    "/auth/token/refresh/",
+];
+
+/* =========================
    1) Interceptor de REQUEST
    Adjunta el Bearer token si existe.
    ========================= */
@@ -69,7 +79,15 @@ api.interceptors.response.use(
         // Si no hay respuesta (error de red, CORS, etc.), no intentamos refresh
         if (!err.response) return Promise.reject(err);
 
-        // Solo interceptamos 401 (no autorizado)
+        const url = original?.url || "";
+
+        // ✅ Si es endpoint público, NO intentamos refrescar ni redirigir.
+        // Dejamos que el componente maneje el error (ej. credenciales inválidas).
+        if (PUBLIC_ENDPOINTS.some((p) => url.includes(p))) {
+            return Promise.reject(err);
+        }
+
+        // Solo interceptamos 401 (no autorizado) para endpoints protegidos
         if (err.response.status !== 401) return Promise.reject(err);
 
         // Evita loop infinito: si ya reintentamos una vez y volvió a fallar, salimos
